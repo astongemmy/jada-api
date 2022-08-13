@@ -71,13 +71,21 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 
 You will need to provide detailed documentation of your API endpoints including the URL, request parameters, and the response body. Use the example below as a reference.
 
-### Documentation Example
+###  Base URL
+```
+http://localhost:5000
+```
+Or any other URL explicitly set by choice.
 
-`GET '/api/v1.0/categories'`
+#### Get All Question Categories
 
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+`GET '/categories'`
+
+- Description: Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category type.
+- Request Body: None
 - Request Arguments: None
-- Returns: An object with a single key, `categories`, that contains an object of `id: category_string` key: value pairs.
+- Path Variables: None
+- Returns: An object with a single key, `categories`, that contains an object of `id: category_string` key: value pairs shown below.
 
 ```json
 {
@@ -87,6 +95,263 @@ You will need to provide detailed documentation of your API endpoints including 
   "4": "History",
   "5": "Entertainment",
   "6": "Sports"
+}
+```
+
+#### Get All Questions
+
+`GET '/questions'`
+
+- Description: Fetches a list of 10 questions per request, in a dictionary format containing keys and corresponding values. Also, this endpoint returns a dictionary of all question categories same as `/categories` endpoint, a total of all questions, as well as the current category.
+- Request Body: None
+- Request Arguments: Optional: `page` Indicates what range of questions should be returned.
+- Request Variables: None
+- Returns: An object of key/value pairs, including a list of questions, number of total questions, current category and categories dictionary etc.
+
+```json
+{
+  "success": true,
+  "message": "Questions returned successfully.",
+  "total_questions": 19,
+  "current_category": "Art",
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  },
+  "questions": [
+    {
+      "answer": "Apollo 13", 
+      "category": 5, 
+      "difficulty": 4, 
+      "id": 2, 
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    }, 
+    {
+      "answer": "Tom Cruise", 
+      "category": 5, 
+      "difficulty": 4, 
+      "id": 4, 
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    }, 
+    {
+      "answer": "Maya Angelou", 
+      "category": 4, 
+      "difficulty": 2, 
+      "id": 5, 
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    }, 
+    {
+      "answer": "Edward Scissorhands", 
+      "category": 5, 
+      "difficulty": 3, 
+      "id": 6, 
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    }, 
+    {
+      "answer": "Muhammad Ali", 
+      "category": 4, 
+      "difficulty": 1, 
+      "id": 9, 
+      "question": "What boxer's original name is Cassius Clay?"
+    }, 
+    {
+      "answer": "Brazil", 
+      "category": 6, 
+      "difficulty": 3, 
+      "id": 10, 
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    }, 
+    {
+      "answer": "Uruguay", 
+      "category": 6, 
+      "difficulty": 4, 
+      "id": 11, 
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    }, 
+    {
+      "answer": "George Washington Carver", 
+      "category": 4, 
+      "difficulty": 2, 
+      "id": 12, 
+      "question": "Who invented Peanut Butter?"
+    }, 
+    {
+      "answer": "Lake Victoria", 
+      "category": 3, 
+      "difficulty": 2, 
+      "id": 13, 
+      "question": "What is the largest lake in Africa?"
+    }, 
+    {
+      "answer": "The Palace of Versailles", 
+      "category": 3, 
+      "difficulty": 3, 
+      "id": 14, 
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    }
+  ]
+}
+```
+
+#### Delete a Question
+
+`DELETE '/questions/:id'`
+
+- Description: Deletes a question record from the database by referencing its id.
+- Request Body: None
+- Request Variables: Required `id` Specifies which question exactly should be deleted.
+- Request Arguments: None
+- Returns: An object indicating a successful operation with the question id that was deleted.
+
+```json
+{
+  "success": true,
+  "message": "Question deleted successfully.",
+  "question_id": 1
+}
+```
+
+#### Get Category Questions
+
+`GET '/categories/:id/questions'`
+
+- Description: Fetches a list of category questions specified by id.
+- Request Body: None
+- Request Variables: Required `id` Indicates which category questions should be retrieved.
+- Request Arguments: None
+- Returns: An object with category questions, total questions for specified category and current category.
+
+```json
+{
+  "success": true,
+  "message": "Category questions returned successfully.",
+  "current_category": "Science",
+  "total_questions": 3,
+  "questions": [
+    {
+      "answer": "The Liver", 
+      "category": 1, 
+      "difficulty": 4, 
+      "id": 20, 
+      "question": "What is the heaviest organ in the human body?"
+    }, 
+    {
+      "answer": "Alexander Fleming", 
+      "category": 1, 
+      "difficulty": 3, 
+      "id": 21, 
+      "question": "Who discovered penicillin?"
+    }, 
+    {
+      "answer": "Blood", 
+      "category": 1, 
+      "difficulty": 4, 
+      "id": 22, 
+      "question": "Hematology is a branch of medicine involving the study of what?"
+    }
+  ]
+}
+```
+
+#### Create New Question
+
+`POST '/questions'`
+
+- Description: This endpoint creates a new question record in the database.
+- Request Body: `Required` JSON object of question payload with keys/value pairs as below.
+```json
+{
+  "question": "What is the heaviest organ in the human body?",
+  "answer": "The Liver",
+  "difficulty": "4",
+  "category": "1"
+}
+```
+- Request Variables: None
+- Request Arguments: None
+- Returns: An object of created question with success status of true and corresponding success message.
+
+```json
+{
+  "success": true,
+  "message": "Question created successfully.",
+  "question": {
+    "answer": "The Liver", 
+    "category": 1, 
+    "difficulty": 4, 
+    "id": 20, 
+    "question": "What is the heaviest organ in the human body?"
+  }
+}
+```
+
+#### Search questions
+
+`POST '/questions/search'`
+
+- Description: Returns a list of questions matching a case insensitive search term provided in the request body.
+- Request Body: `Required` JSON object of question search term.
+```json
+{
+  "searchTerm": "organ"
+}
+```
+- Request Variables: None
+- Request Arguments: None
+- Returns: An object containing total number of matching questions, current category, and a list of matching questions with respect to provided search term.
+
+```json
+{
+  "success": true,
+  "message": "Questions returned successfully.",
+  "total_questions": 1,
+  "current_category": "Science",
+  "questions": [
+    {
+      "answer": "The Liver", 
+      "category": 1, 
+      "difficulty": 4, 
+      "id": 20, 
+      "question": "What is the heaviest organ in the human body?"
+    }
+  ]
+}
+```
+
+####  Play Quiz
+
+`POST '/quizzes'`
+
+- Description: This endpoint fetches a question to play the actual quiz. It takes category object and previous questions list parameters and then returns a random question within the specified category. If category and previous questions parameters are provided, returned question must be a question belonging to that category but not having an id found in previous questions list.
+- Request Body: `Required` JSON object of quiz question payload.
+```json
+{
+  "quiz_category": {
+    "id": 1,
+    "type": "Science"
+  },
+  "previous_questions": ["20", "21"]
+}
+```
+- Request Variables: None
+- Request Arguments: None
+- Returns: An object of randomly selected category question, if `quiz_category` field was provided or question of any category, if no `quiz_category` was provided.
+
+```json
+{
+  "success": true,
+  "message": "Question returned successfully.",
+  "question": {
+    "answer": "Blood", 
+    "category": 1, 
+    "difficulty": 4, 
+    "id": 22, 
+    "question": "Hematology is a branch of medicine involving the study of what?"
+  }
 }
 ```
 

@@ -11,14 +11,16 @@ class FormView extends Component {
       difficulty: 1,
       category: 1,
       categories: {},
+      API_URL: process.env.REACT_APP_API_URL
     };
   }
 
   componentDidMount() {
     $.ajax({
-      url: `/categories`, //TODO: update request URL
+      url: `${this.state.API_URL}/categories`, //TODO: update request URL
       type: 'GET',
       success: (result) => {
+        console.log(result)
         this.setState({ categories: result.categories });
         return;
       },
@@ -32,7 +34,7 @@ class FormView extends Component {
   submitQuestion = (event) => {
     event.preventDefault();
     $.ajax({
-      url: '/questions', //TODO: update request URL
+      url: `${this.state.API_URL}/questions`, //TODO: update request URL
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
