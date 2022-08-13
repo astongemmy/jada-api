@@ -296,7 +296,7 @@ Or any other URL explicitly set by choice.
 `POST '/questions/search'`
 
 - Description: Returns a list of questions matching a case insensitive search term provided in the request body.
-- Request Body: `Required` JSON object of question search term.
+- Request Body: Required: JSON object of question search term.
 ```json
 {
   "searchTerm": "organ"
@@ -329,7 +329,7 @@ Or any other URL explicitly set by choice.
 `POST '/quizzes'`
 
 - Description: This endpoint fetches a question to play the actual quiz. It takes category object and previous questions list parameters and then returns a random question within the specified category. If category and previous questions parameters are provided, returned question must be a question belonging to that category but not having an id found in previous questions list.
-- Request Body: `Required` JSON object of quiz question payload.
+- Request Body: Required: JSON object of quiz question payload.
 ```json
 {
   "quiz_category": {
