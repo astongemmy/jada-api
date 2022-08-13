@@ -107,7 +107,7 @@ Or any other URL explicitly set by choice.
 - Description: Fetches a list of 10 questions per request, in a dictionary format containing keys and corresponding values. Also, this endpoint returns a dictionary of all question categories same as `/categories` endpoint, a total of all questions, as well as the current category.
 - Request Body: None
 - Request Arguments: Optional: `page` Indicates what range of questions should be returned.
-- Request Variables: None
+- Path Variables: None
 - Returns: An object of key/value pairs, including a list of questions, number of total questions, current category and categories dictionary etc.
 
 ```json
@@ -205,8 +205,8 @@ Or any other URL explicitly set by choice.
 
 - Description: Deletes a question record from the database by referencing its id.
 - Request Body: None
-- Request Variables: Required `id` Specifies which question exactly should be deleted.
 - Request Arguments: None
+- Path Variables: Required `id` Specifies which question exactly should be deleted.
 - Returns: An object indicating a successful operation with the question id that was deleted.
 
 ```json
@@ -223,8 +223,8 @@ Or any other URL explicitly set by choice.
 
 - Description: Fetches a list of category questions specified by id.
 - Request Body: None
-- Request Variables: Required `id` Indicates which category questions should be retrieved.
 - Request Arguments: None
+- Path Variables: Required `id` Indicates which category questions should be retrieved.
 - Returns: An object with category questions, total questions for specified category and current category.
 
 ```json
@@ -273,8 +273,8 @@ Or any other URL explicitly set by choice.
   "category": "1"
 }
 ```
-- Request Variables: None
 - Request Arguments: None
+- Path Variables: None
 - Returns: An object of created question with success status of true and corresponding success message.
 
 ```json
@@ -302,8 +302,8 @@ Or any other URL explicitly set by choice.
   "searchTerm": "organ"
 }
 ```
-- Request Variables: None
 - Request Arguments: None
+- Path Variables: None
 - Returns: An object containing total number of matching questions, current category, and a list of matching questions with respect to provided search term.
 
 ```json
@@ -339,8 +339,8 @@ Or any other URL explicitly set by choice.
   "previous_questions": ["20", "21"]
 }
 ```
-- Request Variables: None
 - Request Arguments: None
+- Path Variables: None
 - Returns: An object of randomly selected category question, if `quiz_category` field was provided or question of any category, if no `quiz_category` was provided.
 
 ```json
