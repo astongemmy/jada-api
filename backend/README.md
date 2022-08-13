@@ -278,7 +278,7 @@ Or any other URL explicitly set by choice.
 `POST '/questions'`
 
 - Description: This endpoint creates a new question record in the database.
-- Request Body: `Required` JSON object of question payload with keys/value pairs as below.
+- Request Body: Required JSON object of question payload with keys/value pairs as below.
 ```json
 {
   "question": "What is the heaviest organ in the human body?",
