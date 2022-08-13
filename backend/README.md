@@ -77,13 +77,13 @@ http://localhost:5000
 ```
 Or any other URL explicitly set by choice.
 
-####  Note: All successful request returns a JSON object containing a `success` field of `true` and `message` field reflecting the operation performed.
+####  Note: All successful requests return a JSON object containing a `success` field of `true` and `message` field reflecting the operation performed, alongside other key/value pairs for an endpoint.
 ##### Example
 ```json
 {
   "success": true,
   "message": "Successful operation message.",
-  ...other fields
+  "other_keys": "...other related field values"
 }
 ```
 
