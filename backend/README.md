@@ -77,6 +77,8 @@ http://localhost:5000
 ```
 Or any other URL explicitly set by choice.
 
+### Endpoints
+
 #### Get All Question Categories
 
 `GET '/categories'`
