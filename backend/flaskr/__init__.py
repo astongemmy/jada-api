@@ -55,6 +55,8 @@ def create_app(test_config=None):
         if len(categories) == 0: abort(404)
 
         responseDict = {
+            'success': True,
+            'message': 'Categories returned successfully.',
             'categories': {}
         }
 
@@ -160,7 +162,11 @@ def create_app(test_config=None):
 
             question.insert()
 
-            return jsonify(body)
+            return jsonify({
+                'success': True,
+                'message': 'Question created successfully.',
+                **body
+            })
         except:
             abort(422)
 
@@ -188,6 +194,8 @@ def create_app(test_config=None):
             current_page_questions = paginate_questions(request, questions)
 
             return jsonify({
+                'success': True,
+                'message': 'Search questions returned successfully.',
                 'questions': current_page_questions,
                 'total_questions': len(questions),
                 'current_category': ''
@@ -241,7 +249,7 @@ def create_app(test_config=None):
         
         responseDict = {
             'success': True,
-            'message': 'Question returned successfully.',
+            'message': 'Quiz question returned successfully.',
         }
 
         try:

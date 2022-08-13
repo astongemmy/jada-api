@@ -101,12 +101,16 @@ Or any other URL explicitly set by choice.
 
 ```json
 {
-  "1": "Science",
-  "2": "Art",
-  "3": "Geography",
-  "4": "History",
-  "5": "Entertainment",
-  "6": "Sports"
+  "success": true,
+  "message": "Categories returned successfully.",
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  }
 }
 ```
 
@@ -319,7 +323,7 @@ Or any other URL explicitly set by choice.
 ```json
 {
   "success": true,
-  "message": "Questions returned successfully.",
+  "message": "Search questions returned successfully.",
   "total_questions": 1,
   "current_category": "Science",
   "questions": [
@@ -356,7 +360,7 @@ Or any other URL explicitly set by choice.
 ```json
 {
   "success": true,
-  "message": "Question returned successfully.",
+  "message": "Quiz question returned successfully.",
   "question": {
     "answer": "Blood", 
     "category": 1, 
