@@ -120,7 +120,7 @@ Or any other URL explicitly set by choice.
 
 - Description: Fetches a list of 10 questions per request, in a dictionary format containing keys and corresponding values. Also, this endpoint returns a dictionary of all question categories same as `/categories` endpoint, a total of all questions, as well as the current category.
 - Request Body: None
-- Request Arguments: Optional: `page` Indicates what range of questions should be returned.
+- Request Arguments: Optional: `page` Type: Integer. Indicates what range of questions should be returned.
 - Path Variables: None
 - Returns: An object of key/value pairs, including a list of questions, number of total questions, current category and categories dictionary etc.
 
@@ -220,14 +220,14 @@ Or any other URL explicitly set by choice.
 - Description: Deletes a question record from the database by referencing its id.
 - Request Body: None
 - Request Arguments: None
-- Path Variables: Required `id` Specifies which question exactly should be deleted.
+- Path Variables: Required `id` Type: Integer. Specifies which question exactly should be deleted.
 - Returns: An object indicating a successful operation with the question id that was deleted.
 
 ```json
 {
   "success": true,
   "message": "Question deleted successfully.",
-  "question_id": 1
+  "deleted": 1
 }
 ```
 
@@ -238,7 +238,7 @@ Or any other URL explicitly set by choice.
 - Description: Fetches a list of category questions specified by id.
 - Request Body: None
 - Request Arguments: None
-- Path Variables: Required `id` Indicates which category questions should be retrieved.
+- Path Variables: Required `id` Type: Integer. Indicates which category questions should be retrieved.
 - Returns: An object with category questions, total questions for specified category and current category.
 
 ```json
@@ -368,6 +368,65 @@ Or any other URL explicitly set by choice.
     "id": 22, 
     "question": "Hematology is a branch of medicine involving the study of what?"
   }
+}
+```
+
+### Error Responses
+
+Trivia API returns the following error responses with appropriate status codes as illustrated below.
+
+####  400 Bad Request Error
+- Description: This error is returned when there is a wrongly formatted request sent to the server.
+- Returns: JSON object of the form.
+```json
+{
+  "status": false,
+  "error": "400",
+  "message": "bad request"
+}
+```
+
+####  404 Resource Not Found Error
+- Description: This error is returned when a resource requested does not exist.
+- Returns: JSON object of the form.
+```json
+{
+  "status": false,
+  "error": "404",
+  "message": "resource not found"
+}
+```
+
+####  405 Method Not Allowed Error
+- Description: This error is returned when a resource is requested using a wrong http method.
+- Returns: JSON object of the form.
+```json
+{
+  "status": false,
+  "error": "405",
+  "message": "method not allowed"
+}
+```
+
+####  422 Unprocessable Entity Error
+- Description: This error is returned when a request can not be processed by the server due to maybe data error etc.
+- Returns: JSON object of the form.
+```json
+{
+  "status": false,
+  "error": "422",
+  "message": "unprocessable"
+}
+```
+
+####  500 Server Error
+- Description: This error is returned when the server is not able to process a request for some reasons.
+- Returns: JSON object of the form.
+```json
+{
+  "status": false,
+  "error": "500",
+  "message": "server error"
 }
 ```
 

@@ -126,7 +126,7 @@ def create_app(test_config=None):
             responseDict = {
                 'success': True,
                 'message': 'Question deleted successfully.',
-                'question_id': question_id
+                'deleted': question_id
             }
 
             return jsonify(responseDict)
@@ -271,6 +271,10 @@ def create_app(test_config=None):
     Create error handlers for all expected errors
     including 404 and 422.
     """
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({"success": False, "error": 400, "message": "bad request"}), 400
+
     @app.errorhandler(404)
     def not_found(error):
         return (
@@ -284,10 +288,6 @@ def create_app(test_config=None):
             jsonify({"success": False, "error": 422, "message": "unprocessable"}),
             422,
         )
-
-    @app.errorhandler(400)
-    def bad_request(error):
-        return jsonify({"success": False, "error": 400, "message": "bad request"}), 400
 
     @app.errorhandler(405)
     def not_found(error):
