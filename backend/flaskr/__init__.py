@@ -1,30 +1,23 @@
 import json
+from werkzeug.exceptions import NotFound
 from sqlalchemy import and_, or_, func
 import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 import random
 
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
-def paginate_questions(request, selection):
-    page = request.args.get('page', 1, type = int)
-    start = (page - 1) * QUESTIONS_PER_PAGE
-    end = start + QUESTIONS_PER_PAGE
-
-    questions = [question.format() for question in selection]
-    current_page_questions = questions[start:end]
-
-    return current_page_questions
+cors_origin = os.getenv('CORS_ORIGIN')
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    CORS(app, origin='*', supports_credentials=True)
+    CORS(app, origin=cors_origin, supports_credentials=True)
 
     """
     @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
@@ -50,20 +43,25 @@ def create_app(test_config=None):
     """
     @app.route('/categories', methods = ['GET'])
     def get_all_categories():
-        categories = Category.query.all()
+        try:
+            categories = Category.query.all()
 
-        if len(categories) == 0: abort(404)
+            responseDict = {
+                'success': True,
+                'message': 'Categories returned successfully.',
+                'categories': {}
+            }
 
-        responseDict = {
-            'success': True,
-            'message': 'Categories returned successfully.',
-            'categories': {}
-        }
-
-        for category in categories:
-            responseDict['categories'][category.id] = category.type
-        
-        return jsonify(responseDict)
+            for category in categories:
+                responseDict['categories'][category.id] = category.type
+            
+            return jsonify(responseDict)
+        except NotFound:
+            print('Category resource not found in the database.')
+            abort(404)
+        except Exception as error:
+            print(error)
+            abort(422)
 
 
     """
@@ -80,32 +78,38 @@ def create_app(test_config=None):
     """
     @app.route('/questions', methods = ['GET'])
     def get_all_questions():
-        questions = Question.query.order_by(Question.id).all()
-        
-        current_page_questions = paginate_questions(request, questions)
-        
-        if len(current_page_questions) == 0: abort(404)
+        try:
+            page = request.args.get('page', 1, type = int)
+            questions = Question.query.order_by(Question.id).paginate(page, QUESTIONS_PER_PAGE)
+            
+            formatted_questions = [question.format() for question in questions.items]
 
-        responseDict = {
-            'success': True,
-            'message': 'Questions returned successfully.',
-            'questions': [],
-            'total_questions': 0,
-            'current_category': None,
-            'categories': {}
-        }
+            responseDict = {
+                'success': True,
+                'message': 'Questions returned successfully.',
+                'questions': [],
+                'total_questions': 0,
+                'current_category': None,
+                'categories': {}
+            }
 
-        categories = Category.query.all()
+            categories = Category.query.all()
 
-        if len(categories) > 0:
-            for category in categories:
-                responseDict['categories'][category.id] = category.type
+            if len(categories) > 0:
+                for category in categories:
+                    responseDict['categories'][category.id] = category.type
 
-        responseDict['questions'] = current_page_questions
-        responseDict['total_questions'] = len(questions)
-        responseDict['current_category'] = ''
-        
-        return jsonify(responseDict)
+            responseDict['questions'] = formatted_questions
+            responseDict['total_questions'] = questions.total
+            responseDict['current_category'] = ''
+            
+            return jsonify(responseDict)
+        except NotFound:
+            print('Category questions resource not found in the database.')
+            abort(404)
+        except Exception as error:
+            print(error)
+            abort(422)
 
     """
     @TODO:
@@ -119,8 +123,6 @@ def create_app(test_config=None):
         try:
             question = Question.query.filter(Question.id == question_id).one_or_none()
             
-            if question is None: abort(404)
-
             question.delete()
 
             responseDict = {
@@ -130,7 +132,11 @@ def create_app(test_config=None):
             }
 
             return jsonify(responseDict)
-        except:
+        except NotFound:
+            print('Question not found in the database.')
+            abort(404)
+        except Exception as error:
+            print(error)
             abort(422)
 
     """
@@ -153,6 +159,8 @@ def create_app(test_config=None):
         difficulty = body.get('difficulty', None)
 
         try:
+            if not question or not answer: abort(422)
+
             question = Question(
                 question = question,
                 answer = answer,
@@ -167,7 +175,8 @@ def create_app(test_config=None):
                 'message': 'Question created successfully.',
                 **body
             })
-        except:
+        except Exception as error:
+            print(error)
             abort(422)
 
     """
@@ -182,6 +191,7 @@ def create_app(test_config=None):
     """
     @app.route('/questions/search', methods = ['POST'])
     def search_question():
+        page = request.args.get('page', 1, type = int)
         body = request.get_json()
 
         search = body.get("searchTerm", None)
@@ -189,18 +199,19 @@ def create_app(test_config=None):
         try:
             questions = Question.query.order_by(Question.id).filter(
                 Question.question.ilike("%{}%".format(search))
-            ).all()
-            
-            current_page_questions = paginate_questions(request, questions)
+            ).paginate(page, QUESTIONS_PER_PAGE)
+
+            formatted_questions = [question.format() for question in questions.items]
 
             return jsonify({
                 'success': True,
                 'message': 'Search questions returned successfully.',
-                'questions': current_page_questions,
-                'total_questions': len(questions),
+                'questions': formatted_questions,
+                'total_questions': questions.total,
                 'current_category': ''
             })
-        except:
+        except Exception as error:
+            print(error)
             abort(422)
 
     """
@@ -211,7 +222,7 @@ def create_app(test_config=None):
     categories in the left column will cause only questions of that
     category to be shown.
     """
-    @app.route('/categories/<int:category_id>/questions', methods = ['GET'])
+    @app.route('/categories/<int:category_id>/questions', methods = ['GET'], strict_slashes=False)
     def get_category_questions(category_id):
         try:
             category_questions = Question.query.filter(Question.category == category_id).all()
@@ -226,7 +237,8 @@ def create_app(test_config=None):
             }
 
             return jsonify(responseDict)
-        except:
+        except Exception as error:
+            print(error)
             abort(422)
 
     """
@@ -256,14 +268,15 @@ def create_app(test_config=None):
             quiz_question = Question.query.filter(
                 and_(
                     Question.category == quiz_category['id'] if quiz_category['id'] else Question.category > 0,
-                    ~Question.id.in_(previous_questions)
+                    Question.id.notin_(previous_questions)
                 )
             ).order_by(func.random()).first()
             
             if quiz_question: responseDict['question'] = quiz_question.format()
 
             return jsonify(responseDict)
-        except:
+        except Exception as error:
+            print(error)
             abort(422)
 
     """
