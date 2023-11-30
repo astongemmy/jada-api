@@ -6,6 +6,8 @@ echo "${green}Starting backend application.${clear}"
 
 cd ./backend && python3 -m venv .venv && source .venv/bin/activate
 
+# Disable creation of __pycache__ directory in app
+export PYTHONDONTWRITEBYTECODE=1
 # export FLASK_ENV=development
 # export FLASK_APP=./
 
