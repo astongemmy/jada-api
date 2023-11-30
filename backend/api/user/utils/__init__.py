@@ -1,4 +1,4 @@
-from api.middlewares import auth_token_required
+from middlewares import auth_token_required
 from flask_restx import Resource
 
 class UserResource(Resource):
