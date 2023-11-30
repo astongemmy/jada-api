@@ -1,0 +1,22 @@
+#!/bin/bash
+
+source ./scripts/utils
+
+echo "${green}Starting backend application.${clear}"
+
+cd ./backend && python3 -m venv .venv && source .venv/bin/activate
+
+# export FLASK_ENV=development
+# export FLASK_APP=./
+
+flask run --reload &
+
+echo "${green}Starting frontend application.${clear}"
+
+cd .. && cd ./frontend && npm start
+
+app_pid=$!
+
+trap
+  echo "\n${green}Shuting down application!${clear}"
+  kill $app_pid

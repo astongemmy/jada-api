@@ -23,7 +23,11 @@ class QuestionView extends Component {
 
   getQuestions = () => {
     $.ajax({
-      url: `${this.state.API_URL}/questions?page=${this.state.page}`, //TODO: update request URL
+      url: `${this.state.API_URL}/questions?page=${this.state.page}`,
+      crossDomain: true,
+      headers: {
+        'X-ROWAPP-AUTH': 'somehingishere'
+      },
       type: 'GET',
       success: (result) => {
         this.setState({
@@ -35,7 +39,7 @@ class QuestionView extends Component {
         return;
       },
       error: (error) => {
-        alert('Unable to load questions. Please try your request again');
+        console.log('Unable to load questions. Please try your request again');
         return;
       },
     });
@@ -67,7 +71,7 @@ class QuestionView extends Component {
   getByCategory = (id) => {
     $.ajax({
       url: `${this.state.API_URL}/categories/${id}/questions`, //TODO: update request URL
-      type: 'GET',
+      type: 'POST',
       success: (result) => {
         this.setState({
           questions: result.questions,
@@ -77,7 +81,7 @@ class QuestionView extends Component {
         return;
       },
       error: (error) => {
-        alert('Unable to load questions. Please try your request again');
+        console.log('Unable to load questions. Please try your request again');
         return;
       },
     });
@@ -85,11 +89,11 @@ class QuestionView extends Component {
 
   submitSearch = (searchTerm) => {
     $.ajax({
-      url: `${this.state.API_URL}/questions/search`, //TODO: update request URL
-      type: 'POST',
+      url: `${this.state.API_URL}/questions/search?q=${searchTerm}`, //TODO: update request URL
+      type: 'GET',
       dataType: 'json',
       contentType: 'application/json',
-      data: JSON.stringify({ searchTerm: searchTerm }),
+      // data: JSON.stringify({ searchTerm: searchTerm }),
       xhrFields: {
         withCredentials: true,
       },
@@ -103,7 +107,7 @@ class QuestionView extends Component {
         return;
       },
       error: (error) => {
-        alert('Unable to load questions. Please try your request again');
+        console.log('Unable to load questions. Please try your request again');
         return;
       },
     });
@@ -119,7 +123,7 @@ class QuestionView extends Component {
             this.getQuestions();
           },
           error: (error) => {
-            alert('Unable to load questions. Please try your request again');
+            console.log('Unable to load questions. Please try your request again');
             return;
           },
         });

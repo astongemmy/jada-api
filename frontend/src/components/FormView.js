@@ -25,7 +25,7 @@ class FormView extends Component {
         return;
       },
       error: (error) => {
-        alert('Unable to load categories. Please try your request again');
+        console.log('Unable to load categories. Please try your request again');
         return;
       },
     });
@@ -53,7 +53,7 @@ class FormView extends Component {
         return;
       },
       error: (error) => {
-        alert('Unable to add question. Please try your request again');
+        console.log('Unable to add question. Please try your request again');
         return;
       },
     });

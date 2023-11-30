@@ -1,0 +1,5 @@
+#!/bin/bash
+
+green='\033[92m'
+clear='\033[0m'
+red='\033[31m'

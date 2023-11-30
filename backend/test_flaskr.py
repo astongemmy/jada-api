@@ -1,11 +1,12 @@
-import os
+
+from models import setup_db, Question, Category
+from flask_sqlalchemy import SQLAlchemy
 from unicodedata import category
+from app import create_app
 import unittest
 import json
-from flask_sqlalchemy import SQLAlchemy
+import os
 
-from flaskr import create_app
-from models import setup_db, Question, Category
 
 class TriviaTestCase(unittest.TestCase):
     """This class represents the trivia test case"""
