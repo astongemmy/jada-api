@@ -16,8 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Start running tests
-      run: pwd && sh ../scripts/test
-    
-    - name: Log tests successfull
-      run: echo 'All tests ran successfully!'
+      - uses: actions/checkout@v2
+      
+      - name: Start running tests
+        run: pwd && sh ./scripts/test
+        
+      - name: Log tests successfull
+        run: echo 'All tests ran successfully!'
