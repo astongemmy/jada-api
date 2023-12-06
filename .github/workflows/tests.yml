@@ -10,16 +10,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  install-packages:
-    name: Install Application Packages
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v2
-      
-      - name: Installing packages
-        run: sh ./scripts/install
-  
   run-test:
     name: Run Series of Application Tests
     runs-on: ubuntu-latest
@@ -28,7 +18,8 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: Start running tests
-        run: sh ./scripts/test
-        
-      - name: Log tests successfull
+        run: echo 'Installed application packages...'
+        run: sh ./scripts/install &&
+        run: echo 'Packages installed successfully!'
+        run: sh ./scripts/test &&
         run: echo 'All tests ran successfully!'
