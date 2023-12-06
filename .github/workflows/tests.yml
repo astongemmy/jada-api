@@ -19,7 +19,7 @@ jobs:
       
       - name: Start running tests
         run: echo 'Installed application packages...'
-        run: sh ./scripts/install &&
+        run: sh ./scripts/install
         run: echo 'Packages installed successfully!'
-        run: sh ./scripts/test &&
+        run: sh ./scripts/test
         run: echo 'All tests ran successfully!'
