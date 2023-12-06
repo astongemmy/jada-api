@@ -11,13 +11,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-transition-issue:
+  run-test:
     name: Run Series of Application Tests
     runs-on: ubuntu-latest
     
     steps:
     - name: Start running tests
-      run: sh ./scripts/tests
+      run: sh ./scripts/test
     
     - name: Log tests successfull
       run: echo 'All tests ran successfully!'
