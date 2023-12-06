@@ -1,4 +1,4 @@
-from utils.env import IS_DEVELOPMENT, IS_PRODUCTION
+from utils.common import IS_DEVELOPMENT, IS_PRODUCTION
 from werkzeug.exceptions import HTTPException
 from flask import Flask, Response, g
 import traceback
@@ -18,10 +18,10 @@ def setup_app_logger():
   if IS_DEVELOPMENT:
     logging.basicConfig(level=logging.DEBUG)
 
-def log_main_request(response: Response) -> Response:
+def log_request(response: Response) -> Response:
   if IS_DEVELOPMENT:
     return response
-
+  
   log_level = g.get('log_level', 0)
   if log_level < logging.WARNING:
     return response
@@ -31,7 +31,7 @@ def log_main_request(response: Response) -> Response:
   request_logger = logging.getLogger('request')
   request_logger.log(log_level, '', extra={'status': status})
 
-  if g.get('error_msg', None):
+  if g.get('exception_message', None):
     error_logger = logging.getLogger('errorReporter')
     error_logger.log(log_level, '', extra={'status': status})
 
@@ -43,25 +43,40 @@ def handle_exception(exception):
   
   logging.exception(exception)
   message = traceback.format_exc()
-  g.error_msg = message
-
+  g.exception_message = message
+  
   if isinstance(exception, HTTPException):
-    return exception
+    description = exception.description
+    name = exception.name
+    code = exception.code
+
+    if IS_PRODUCTION:
+      data = description if type(description) in [list, dict] else {}
+    else:
+      data = { 'exception': str(exception) }
+
+    return {
+      'success': False,
+      'message': name,
+      'data': data
+    }, code
 
   message = str(exception) if IS_DEVELOPMENT else 'Internal Server Error'
-  return message, 500
+  
+  return {
+    'message': message,
+    'success': False,
+    'data': {}
+  }, 500
 
-class FlaskLogger():
+
+class AppLogger():
   def __init__(self, app: Flask):
-    self.handle_exception(app)
-    # self.instrumentation(app)
     self.after_request(app)
+    self.errorhandler(app)
 
-  def handle_exception(self, app: Flask):
+  def errorhandler(self, app: Flask):
     app.errorhandler(Exception)(handle_exception)
 
-  # def instrumentation(self, app: Flask):
-  #   app.instrument_app(app)
-  
   def after_request(self, app: Flask):
-    app.after_request(log_main_request)
+    app.after_request(log_request)

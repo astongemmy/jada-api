@@ -1,4 +1,4 @@
-from utils.logger import FlaskLogger
+from utils.logger import AppLogger
 from flask_caching import Cache
 from config.cache import config
 from flask import Flask
@@ -18,7 +18,6 @@ def ndb_wsgi_middleware(wsgi_app):
 
 def create_service_middleware(app: Flask):
   app.wsgi_app = ndb_wsgi_middleware(app.wsgi_app)
-  FlaskLogger(app)
-  
   cache = Cache(config=config)
   cache.init_app(app)
+  AppLogger(app)

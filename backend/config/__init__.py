@@ -1,8 +1,9 @@
+from utils.common import IS_DEVELOPMENT, get_env_variable
 import os
 
 # Database variables
-db_connection_string = os.getenv('DATABASE_CONNECTION_STRING')
-database_name = os.getenv('DATABASE_NAME')
+db_connection_string = get_env_variable('DATABASE_CONNECTION_STRING')
+database_name = get_env_variable('DATABASE_NAME')
 database_path = 'postgresql://{}/{}'.format(
   db_connection_string,
   database_name
@@ -12,6 +13,7 @@ database_path = 'postgresql://{}/{}'.format(
 config = {
   'SQLALCHEMY_DATABASE_URI': database_path,
   'SQLALCHEMY_TRACK_MODIFICATIONS': False,
+  'FLASK_DEBUG': IS_DEVELOPMENT
 }
 
 # CORS variable

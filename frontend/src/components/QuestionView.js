@@ -29,14 +29,13 @@ class QuestionView extends Component {
         'X-ROWAPP-AUTH': 'somehingishere'
       },
       type: 'GET',
-      success: (result) => {
-        this.setState({
-          questions: result.questions,
-          totalQuestions: result.total_questions,
-          categories: result.categories,
-          currentCategory: result.current_category,
+      success: ({ data }) => {
+        return this.setState({
+          currentCategory: data.current_category,
+          totalQuestions: data.total_questions,
+          categories: data.categories,
+          questions: data.questions,
         });
-        return;
       },
       error: (error) => {
         console.log('Unable to load questions. Please try your request again');
@@ -71,14 +70,13 @@ class QuestionView extends Component {
   getByCategory = (id) => {
     $.ajax({
       url: `${this.state.API_URL}/categories/${id}/questions`, //TODO: update request URL
-      type: 'POST',
-      success: (result) => {
-        this.setState({
-          questions: result.questions,
-          totalQuestions: result.total_questions,
-          currentCategory: result.current_category,
+      type: 'GET',
+      success: ({ data }) => {
+        return this.setState({
+          currentCategory: data.current_category,
+          totalQuestions: data.total_questions,
+          questions: data.questions
         });
-        return;
       },
       error: (error) => {
         console.log('Unable to load questions. Please try your request again');
@@ -93,18 +91,16 @@ class QuestionView extends Component {
       type: 'GET',
       dataType: 'json',
       contentType: 'application/json',
-      // data: JSON.stringify({ searchTerm: searchTerm }),
       xhrFields: {
         withCredentials: true,
       },
       crossDomain: true,
-      success: (result) => {
-        this.setState({
-          questions: result.questions,
-          totalQuestions: result.total_questions,
-          currentCategory: result.current_category,
+      success: ({ data }) => {
+        return this.setState({
+          currentCategory: data.current_category,
+          totalQuestions: data.total_questions,
+          questions: data.questions
         });
-        return;
       },
       error: (error) => {
         console.log('Unable to load questions. Please try your request again');

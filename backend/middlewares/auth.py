@@ -1,5 +1,4 @@
-from flask_restx import abort
-from flask import request, g
+from flask import request, g, abort
 from functools import wraps
 import logging
 
@@ -25,19 +24,24 @@ def auth_token_required():
                             # else:
                             #     g.member_key = None
                         else:
-                            logging.error('User key missing in authentication object')
-                            abort(403, message='Access denied', status=False, error=403)
+                            logging.error('User key missing in authentication object.')
+                            abort(401)
+
                     else:
-                        logging.error('No authentication key provided')
-                        abort(403, message='Access denied', status=False, error=403)
+                        logging.error('Could not find provided authentication token.')
+                        abort(401)
+
                 # except (binascii.Error, DecodeError) as e:
+                # logging.warning(str(e))
                 except:
-                    # logging.warning(str(e))
-                    logging.warning("Invalid access token provided: %s" %auth_key)
-                    abort(403, message='Access denied', status=False, error=403)
+                    logging.warning('Invalid access token provided: %s' %auth_key)
+                    abort(401)
                 
                 return func(*args, **kwargs)
             else:
-                abort(403, message='Access denied', status=False, error=403)
+                logging.warning('Authentication header missing in request payload.')
+                abort(401)
+
         return middleware
+    
     return decorator

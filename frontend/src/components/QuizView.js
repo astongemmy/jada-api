@@ -24,8 +24,8 @@ class QuizView extends Component {
     $.ajax({
       url: `${this.state.API_URL}/categories`, //TODO: update request URL
       type: 'GET',
-      success: (result) => {
-        this.setState({ categories: result.categories });
+      success: ({ data }) => {
+        this.setState({ categories: data.categories });
         return;
       },
       error: (error) => {
@@ -62,15 +62,14 @@ class QuizView extends Component {
         withCredentials: true,
       },
       crossDomain: true,
-      success: (result) => {
-        this.setState({
-          showAnswer: false,
+      success: ({ data }) => {
+        return this.setState({
+          forceEnd: data.question ? false : true,
           previousQuestions: previousQuestions,
-          currentQuestion: result.question,
+          currentQuestion: data.question,
+          showAnswer: false,
           guess: '',
-          forceEnd: result.question ? false : true,
         });
-        return;
       },
       error: (error) => {
         console.log('Unable to load question. Please try your request again');

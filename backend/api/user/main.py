@@ -12,8 +12,8 @@ auth = {
 }
 
 router = Api(
-  app,
-  auhorization=auth,
+  auhorizations=auth,
   security='apiKey',
-  doc='/api-docs'
+  doc='/api-docs',
+  app=app
 )

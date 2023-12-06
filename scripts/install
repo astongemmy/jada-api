@@ -2,15 +2,17 @@
 
 source ./scripts/utils
 
-echo "${green}Installing frontend packages.${clear}"
+trap 'echo "\n${green}Dependencies installation cancelled!${clear}"; exit' SIGINT
 
-cd ./frontend && npm install
+echo "${green}Installing frontend packages...${clear}"
 
-echo "${green}Installing backend packages.${clear}"
+cd ./frontend && npm install &&
+
+echo "${green}Installing backend packages...${clear}"
 
 cd .. && cd ./backend
 
-python3 -m venv .venv && source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate &&
 
 pip install -r requirements.txt --upgrade
 

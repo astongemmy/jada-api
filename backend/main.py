@@ -12,9 +12,9 @@ setup_app_logger()
 # Import available apps
 from api.main import app as api
 
-all_apps = [api]
+apps = [api]
 
-for app in all_apps:
+for app in apps:
   create_service_middleware(app)
 
 class AppDispatcher(DispatcherMiddleware):
@@ -26,17 +26,17 @@ class AppDispatcher(DispatcherMiddleware):
     return app(environ, start_response)
 
 
-app = AppDispatcher(api, {
+app = AppDispatcher('/', {
   '/api': api
 })
 
 if __name__ == '__main__':
   run_simple(
-    '0.0.0.0',
-    9000,
-    app,
     reloader_type='stat',
+    hostname='0.0.0.0',
     use_reloader=True,
     use_debugger=True,
-    use_evalax=True
+    application=app,
+    use_evalax=True,
+    port=9000
   )
