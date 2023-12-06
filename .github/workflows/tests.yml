@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: Start running tests
-        run: pwd && sh ./scripts/test
+        run: ./scripts/test
         
       - name: Log tests successfull
         run: echo 'All tests ran successfully!'
