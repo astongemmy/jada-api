@@ -17,7 +17,7 @@ jobs:
     
     steps:
     - name: Start running tests
-      run: sh scripts/test
+      run: pwd && sh /scripts/test
     
     - name: Log tests successfull
       run: echo 'All tests ran successfully!'
