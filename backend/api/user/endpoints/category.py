@@ -1,46 +1,38 @@
-from ..router_models import categories_model, category_questions_model
+from ..schema import categories_model, category_questions_model
 from models import Category, Question, format_questions
-from werkzeug.exceptions import NotFound
+from ...utils.response import ApiResponse
 from ..utils import UserResource
 from api.user import router
-from flask import abort
 
-@router.route('/categories', '/categories/<int:category_id>/questions')
+@router.route('/categories')
 class Categories(UserResource):
   @router.marshal_with(categories_model)
   def get(self):
-    try:
-      categories = Category.query.all()
+    categories = Category.query.all()
+    
+    all_categories = {}
+    
+    for category in categories:
+      all_categories[category.id] = category.type
       
-      all_categories = {}
-      
-      for category in categories:
-        all_categories[category.id] = category.type
-        
-      return {
-        'message': 'Categories returned successfully.',
-        'categories': all_categories,
-        'success': True,
+    return ApiResponse.ok(
+      message='Categories returned successfully.',
+      data={
+        'categories': all_categories
       }
-    except NotFound:
-      print('Category resource not found in the database.')
-      abort(404)
-    except Exception as error:
-      print(error)
-      abort(422)
+    )
 
+
+@router.route('/categories/<int:category_id>/questions')
+class CategoryQuesitons(UserResource):
   @router.marshal_with(category_questions_model)
-  def post(self, category_id = ''):
-    try:
-      questions = Question.query.filter(Question.category == category_id).all()
-      
-      return {
-        'message': 'Category questions returned successfully.',
+  def get(self, category_id = ''):
+    questions = Question.query.filter(Question.category == category_id).all()
+    
+    return ApiResponse.ok(
+      message='Category questions returned successfully.',
+      data={
         'questions': format_questions(questions),
-        'total_questions': len(questions),
-        'current_category': None,
-        'success': True
+        'total_questions': len(questions)
       }
-    except Exception as error:
-      print(error)
-      abort(422)
+    )

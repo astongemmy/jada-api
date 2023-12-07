@@ -1,0 +1,28 @@
+#!/bin/bash
+
+source ./scripts/utils
+
+trap 'echo "\n${green}Tests cancelled!${clear}"; exit' SIGINT
+
+echo "${green}Running backend tests...${clear}"
+
+cd ./backend && python3 -m venv .venv && source .venv/bin/activate
+
+# Setup test database
+dropdb trivia_test --if-exists &&
+createdb trivia_test &&
+psql trivia_test < ./tests/database/trivia.psql &&
+
+# Disable creation of __pycache__ directory in app
+export PYTHONDONTWRITEBYTECODE=1
+export FLASK_ENV=production
+
+python test.py
+
+if [[ $? -eq 0 ]]; then
+  echo "\n${green}Tests passed successfully!${clear}"
+else
+  echo "\n${red}Some test(s) failed!${clear}"
+fi
+
+exit

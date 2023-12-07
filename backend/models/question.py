@@ -22,6 +22,9 @@ class Question(db.Model):
     def insert(self):
         db.session.add(self)
         db.session.commit()
+    
+    def rollback(self):
+        db.session.rollback()
 
     def update(self):
         db.session.commit()

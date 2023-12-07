@@ -1,22 +1,25 @@
+from .utils.response import ApiResponse
 from flask_sqlalchemy import SQLAlchemy
 from config import config, cors_origin
 from api.user import router as user
+from .utils.app import create_app
 from flask_cors import CORS
-from flask import Flask
 
 db = SQLAlchemy()
 
-# Create flask app
-app = Flask('API')
-  
-# Update app's configuration
-app.config.update(config)
+# Create and get flask app instance
+app, handle_user_exception, handle_exception = create_app(name='API', config=config)
 
 # CORS setup
 CORS(app=app, origins=cors_origin, supports_credentials=True)
 
 # Register routes
 app.register_blueprint(user.app, url_prefix='/api/v1/user')
+
+# Flask_restx has been initialized in Blueprint's import therefore,
+# re-assign error handling control from flask_restx to flask
+app.handle_user_exception = handle_user_exception
+app.handle_exception = handle_exception
 
 # Setup database
 db.app = app
@@ -38,66 +41,31 @@ def after_request(response):
 
   return response
 
-
 # Error handlers for all expected errors
-@app.errorhandler(400)
-def bad_request(error):
-  return {
-    'message': 'Bad request',
-    'success': False,
-    'error': 400
-  }, 400
+@app.errorhandler(422)
+def unprocessable(error):
+  return ApiResponse.unprocessable(data=error.description)
 
-
-@app.errorhandler(401)
-def unauthorized(error):
-  return {
-    'message': 'Unauthorized',
-    'success': False,
-    'error': 401
-  }, 401
-
-
-@app.errorhandler(403)
-def forbidden(error):
-  return {
-    'message': 'Forbidden',
-    'success': False,
-    'error': 403
-  }, 403
-
+@app.errorhandler(405)
+def not_allowed(error):
+  return ApiResponse.not_allowed(data=error.description)
 
 @app.errorhandler(404)
 def not_found(error):
-  return {
-    'message': 'Resource not found',
-    'success': False,
-    'error': 404
-  }, 404
+  return ApiResponse.not_found(data=error.description)
 
+@app.errorhandler(400)
+def bad_request(error):
+  return ApiResponse.bad_request(data=error.description)
 
-@app.errorhandler(422)
-def unprocessable(error):
-  return {
-    'message': 'Unprocessable Entity',
-    'success': False,
-    'error': 422
-  }, 422
+@app.errorhandler(401)
+def unauthorized(error):
+  return ApiResponse.unauthorized(data=error.description)
 
-
-@app.errorhandler(405)
-def not_found(error):
-  return {
-    'message': 'Method not allowed',
-    'success': False,
-    'error': 405
-  },  405
-
+@app.errorhandler(403)
+def forbidden(error):
+  return ApiResponse.forbidden(data=error.description)
 
 @app.errorhandler(500)
 def server_error(error):
-  return {
-    'message': 'Server error',
-    'success': False,
-    'error': 500
-  }, 500
+  return ApiResponse.server_error(data=error.description)
