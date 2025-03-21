@@ -1,4 +1,5 @@
 from datetime import datetime, timezone, timedelta
+from jwt.exceptions import DecodeError
 from config.cache import AuthToken
 from google.oauth2 import id_token
 from Crypto.Cipher import AES
@@ -49,17 +50,22 @@ class Auth(object):
 
   @staticmethod
   def validate_user_key(user_key):
+    user = None
+
     try:
       token = AuthToken.get(user_key)
       
       user = jwt.decode(token, options={
         'verify_signature': False
       })
-      
-      return user
-    except ValueError as e:
-      logging.error(f'Auth user not found.: {e}')
-      return None
+    except DecodeError:
+      logging.error(f'Invalid user key provided.')
+    except ValueError:
+      logging.error(f'Auth user not found.')
+    except Exception as e:
+      logging.error(f'Token validation error.: {e}')
+    
+    return user
   
 
   @staticmethod

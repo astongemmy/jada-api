@@ -8,7 +8,7 @@ def auth_token_required(func):
 	@wraps(func)
 	def middleware(*args, **kwargs):
 		user_key = request.headers.get('X-JADA-AUTH')
-
+		
 		if not user_key:
 			logging.warning('User key not supplied.')
 			abort(401, description='Access denied')
@@ -16,7 +16,6 @@ def auth_token_required(func):
 		user = Auth.validate_user_key(user_key)
 
 		if not user:
-			logging.error('Invalid user key provided.')
 			abort(401, description='Access denied')
 		
 		g.user = user

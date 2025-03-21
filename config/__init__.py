@@ -1,12 +1,15 @@
+from .development import DevelopmentConfig 
+from .production import ProductionConfig
 from config.common import ENVIRONMENT
-from .development import DevConfig
+from .staging import StagingConfig
+from .test import TestConfig 
 
 
 configs = {
-  'development': DevConfig,
-  'production': DevConfig,
-  'staging': DevConfig,
-  'test': DevConfig
+  'development': DevelopmentConfig,
+  'production': ProductionConfig,
+  'staging': StagingConfig,
+  'test': TestConfig
 }
 
 config = configs[ENVIRONMENT]()

@@ -4,7 +4,7 @@ import redis
 
 AuthToken = redis.Redis(
   decode_responses=IS_DEVELOPMENT,
-  host='localhost',
+  host='redis',
   port=6379,
   db=0
 )

@@ -3,6 +3,6 @@ from .common import Config
 
 
 @dataclass
-class DevelopmentConfig(Config):
+class StagingConfig(Config):
   # List out dev specific configs here
   SOME_DUMMY_CONFIG_KEY: str = ''

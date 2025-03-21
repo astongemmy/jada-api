@@ -42,7 +42,7 @@ function is_server_started() {
 # Ping started backend server
 function ping_service() {
   local service="${purple}$(echo "$1" | tr '[:lower:]' '[:upper:]')${clear}"
-  local ping_url="http://localhost:5000/${1}/ping"
+  local ping_url="http://localhost:9000/${1}/ping"
 
   jada_echo "${cyan}Pinging ${service} ${cyan}service via ${ping_url}${clear}"
 

@@ -16,11 +16,15 @@ def log_request(response: Response) -> Response:
   status = getattr(response, 'status_code', 500)
 
   request_logger = logging.getLogger('request')
-  request_logger.log(log_level, '', extra={'status': status})
+  request_logger.log(log_level, '', extra={
+    'status': status
+  })
 
   if g.get('exception_message', None):
     error_logger = logging.getLogger('errorReporter')
-    error_logger.log(log_level, '', extra={'status': status})
+    error_logger.log(log_level, '', extra={
+      'status': status
+    })
 
   return response
 
@@ -49,26 +53,18 @@ def handle_exception(exception):
       'data': data
     }, code
 
-  message = str(exception) if IS_DEVELOPMENT else 'Internal Server Error'
+  data = {
+    'error': str(exception) if IS_DEVELOPMENT else 'Application Error'
+  }
   
   return {
-    'message': message,
+    'message': 'Internal Server Error',
     'success': False,
-    'data': {}
+    'data': data
   }, 500
 
 
-def setup_app_logger():
-  # try:
-  #   if not IS_DEVELOPMENT:
-  #     print('Production logger will be attached here!')
-  # except RuntimeError:
-    # If debugger is available, an error is raised
-    # pass
-
-  # if not IS_DEVELOPMENT:
-    # import cloud logger here
- 
+def configure_app_logger():
   if IS_DEVELOPMENT:
     logging.basicConfig(level=logging.DEBUG)
 

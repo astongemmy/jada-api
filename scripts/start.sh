@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Import utils
-source ./scripts/utils
+source ./scripts/utils.sh
 
 # Default environment
 environment='development'
@@ -28,11 +28,11 @@ done
 start_server() {
   jada_echo "${cyan}Starting application server...${clear}"
 
-  python3 -m venv .venv && source .venv/bin/activate
-  export PYTHONDONTWRITEBYTECODE=1
-  export FLASK_ENV=$environment
+  source .venv/bin/activate
   
-  flask run --reload &
+  # flask run --reload &
+
+  python main.py &
   
   # Update services pids
   services_pids[0]=$!
