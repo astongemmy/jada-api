@@ -2,18 +2,12 @@
 
 source ./scripts/utils
 
-trap 'echo "\n${green}Dependencies installation cancelled!${clear}"; exit' SIGINT
+trap 'jada_echo "${red}Dependencies installation cancelled!${clear}"; exit' SIGINT
 
-echo "${green}Installing frontend packages...${clear}"
-
-cd ./frontend && npm install &&
-
-echo "${green}Installing backend packages...${clear}"
-
-cd .. && cd ./backend
+jada_echo "${cyan}Installing dependencies...${clear}"
 
 python3 -m venv .venv && source .venv/bin/activate &&
 
-pip install -r requirements.txt --upgrade
+pip install -r requirements.txt --upgrade pip
 
-echo "${green}Packages installed successfully!${clear}"
+jada_echo "${green}Dependencies installed successfully!${clear}"

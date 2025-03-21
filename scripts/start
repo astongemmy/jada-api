@@ -18,81 +18,44 @@ while [[ $# -gt 0 ]]; do
     #   shift 2
     #   ;;
     *)
-      echo "Unknown option: $1 provided." >&2
+      jada_echo "Unknown option: $1 provided." >&2
       exit 1
       ;;
   esac
 done
 
-# All apps in sequence in which they are started
-apps=('Flask' 'React')
+# Function to start Flask server
+start_server() {
+  jada_echo "${cyan}Starting application server...${clear}"
 
-# Function to start Flask app
-start_flask() {
-  echo "${green}Starting backend server...${clear}"
-
-  cd ./backend
   python3 -m venv .venv && source .venv/bin/activate
   export PYTHONDONTWRITEBYTECODE=1
   export FLASK_ENV=$environment
   
   flask run --reload &
   
-  # Update app pids with Flask's pid
-  app_pids[0]=$!
+  # Update services pids
+  services_pids[0]=$!
   
   sleep 1
-
-  echo "\n${green}Pinging backend server for successful connection...${clear}"
 
   is_server_started
   
   # If backend server fails to start after set time, kill server and exit process
   if [ $? -ne 0 ]; then
-    echo "\n${red}<==== Timeout reached. Backend server could not start within $timeout seconds. ====>${clear}"
-    cleanup
+    jada_echo "${red}TIMEOUT: Server could not start within $timeout seconds.${clear}"
+    shutdown
   fi
 
-  # Backend server is fully started
-  echo "\n${green}<==== Backend server fully started! ====>${clear}\n"
+  # Server is fully started
+  jada_echo "${green}Server is active and running!${clear}"
 }
 
-# Function to start React app
-start_react() {
-  echo "${green}Starting React app...${clear}"
-  cd ../frontend && npm start
-}
+# Trap Ctrl+C (SIGINT) to call the shutdown function
+trap "shutdown" SIGINT
 
-# Function to clean up and exit
-cleanup() {
-  echo "\n${green}<==== Shutting down gracefully! ====>${clear}"
+# Start all services
+start_server
 
-  for index in ${!app_pids[@]}; do
-    pid=${app_pids[$index]}
-    app=${apps[$index]}
-    
-    echo "${green}- Terminating ${app} app with PID: ${pid}...${clear}"
-    if [ -n $pid ] && kill -0 $pid 2>/dev/null; then
-      kill -15 ${pid}
-      wait ${pid} 2>/dev/null || true
-    fi
-  done
-
-  echo "\n${green}<==== Cleanup complete! ====>${clear}"
-  echo "${green}Shutdown completed!${clear}"
-  exit 0
-}
-
-# Trap Ctrl+C (SIGINT) to call the cleanup function
-trap "cleanup" SIGINT
-
-# Start Flask app in the background
-start_flask
-
-# Start React app in the background
-start_react &
-# Update app pids with React's pid
-app_pids[1]=$!
-
-# Wait for app processes
-wait $app_pids
+# Wait for services
+wait $services_pids
